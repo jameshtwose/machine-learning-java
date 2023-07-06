@@ -46,14 +46,13 @@
       <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
     </dependency>
-  </dependencies>
 
-  <dependency>
-		<groupId>org.projectlombok</groupId>
-		<artifactId>lombok</artifactId>
-		<version>1.18.28</version>
-		<scope>provided</scope>
-	</dependency>
+    <dependency>
+      <groupId>tech.tablesaw</groupId>
+      <artifactId>tablesaw-jsplot</artifactId>
+      <version>0.25.2</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

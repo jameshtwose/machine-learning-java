@@ -4,6 +4,9 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import javafx.scene.chart.PieChart.Data;
+
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -16,36 +19,6 @@ import org.apache.spark.ml.stat.Correlation;
 import org.apache.spark.ml.feature.VectorAssembler;
 
 public class readCsv {
-    // public static class CorrOutput implements Serializable {
-    //     private String column1;
-    //     private String column2;
-    //     private double correlation;
-
-    //     public String getCol1() {
-    //         return column1;
-    //     }
-
-    //     public String getCol2() {
-    //         return column2;
-    //     }
-
-    //     public double getCorr() {
-    //         return correlation;
-    //     }
-
-    //     public void setCol1(String column1) {
-    //         this.column1 = column1;
-    //     }
-
-    //     public void setCol2(String column2) {
-    //         this.column2 = column2;
-    //     }
-
-    //     public void setCorr(double correlation) {
-    //         this.correlation = correlation;
-    //     }
-
-    // }
 
     public static void main() {
         boolean stop_logging = true;
@@ -63,7 +36,7 @@ public class readCsv {
                 .getOrCreate();
 
         // String path = "https://raw.githubusercontent.com/jameshtwose/example_deliverables/main/classification_examples/pima_diabetes/diabetes.csv";
-        String path = "demo/src/main/java/com/example/diabetes.csv";
+        String path = "demo/src/main/java/com/example/diabetes-smaller.csv";
         Dataset<Row> df = spark.read().option("header", "true").option("inferSchema", "true").csv(path);
         // df.limit(5).show();
         // df.printSchema();
@@ -85,9 +58,26 @@ public class readCsv {
         // get the correlation matrix
         Row correlation_matrix = Correlation.corr(output, "features").head();
 
+        Dataset<Row> correlation_matrix_dataset = Correlation.corr(output, "features");
+
+        correlation_matrix_dataset.show();
+
         // print the correlation matrix
         System.out.println("Pearson correlation matrix:\n" + correlation_matrix.get(0).toString());
+
+        // print the correlation matrix to 2 decimal places
+        // Precision.round(correlation_matrix.get(0), 2);
+        double rounded_number = Precision.round(41.12334133, 2);
+        System.out.println("Rounded number: " + rounded_number);
         
+        // write the correlation matrix to a file
+        try {
+            PrintWriter writer = new PrintWriter("demo/src/main/java/com/example/correlation_matrix.txt", "UTF-8");
+            writer.println(correlation_matrix.get(0).toString());
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("Error writing to file");
+        }
         // double corr = df.stat().corr("Pregnancies", "Glucose");
         // System.out.println("Correlation between Pregnancies and Glucose is " + corr);
         spark.stop();
